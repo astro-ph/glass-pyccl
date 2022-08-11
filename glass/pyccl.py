@@ -2,7 +2,7 @@
 # license: MIT
 '''module for CCL interoperability'''
 
-__version__ = '2022.3.11'
+__version__ = '2022.8.11'
 
 
 import numpy as np
@@ -13,7 +13,7 @@ from glass.core import generator
 
 
 @generator('zmin, zmax -> cl')
-def ccl_matter_cls(cosmo, lmax):
+def ccl_matter_cl(ccl_cosmo, lmax):
     '''generator for the matter angular power spectrum from CCL'''
 
     l = np.arange(lmax+1)
@@ -29,11 +29,10 @@ def ccl_matter_cls(cosmo, lmax):
         zz = np.linspace(zmin, zmax, 100)
         bz = np.ones_like(zz)
         aa = 1/(1 + zz)
-        nz = cosmo.comoving_angular_distance(aa)**2/cosmo.h_over_h0(aa)
+        nz = ccl_cosmo.comoving_angular_distance(aa)**2/ccl_cosmo.h_over_h0(aa)
 
-        tr_, tr = tr, pyccl.NumberCountsTracer(cosmo, False, (zz, nz), (zz, bz), None)
+        tr = pyccl.NumberCountsTracer(ccl_cosmo, False, (zz, nz), (zz, bz), None)
 
-        cl = pyccl.angular_cl(cosmo, tr, tr, l)
-        cl_ = pyccl.angular_cl(cosmo, tr, tr_, l) if tr_ is not None else None
+        cl = pyccl.angular_cl(ccl_cosmo, tr, tr, l)
 
-        cls = [cl, cl_]
+        cls = [cl]
