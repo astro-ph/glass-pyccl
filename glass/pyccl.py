@@ -2,17 +2,18 @@
 # license: MIT
 '''module for CCL interoperability'''
 
-__version__ = '2022.8.11'
+__version__ = '2022.9.30'
 
 
 import numpy as np
 
 import pyccl
 
-from glass.core import generator
+from glass.generator import receives, yields
 
 
-@generator('zmin, zmax -> cl')
+@receives('zmin', 'zmax')
+@yields('cl')
 def ccl_matter_cl(ccl_cosmo, lmax):
     '''generator for the matter angular power spectrum from CCL'''
 
